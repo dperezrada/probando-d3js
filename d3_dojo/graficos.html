@@ -1,0 +1,119 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
+		<script src="http://d3js.org/d3.v2.js"></script>
+		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+		<script src="http://underscorejs.org/underscore.js"></script>
+		<style type="text/css">
+			body {
+				background-color: #ccc
+			}
+			.graph {
+				padding-top: 20px;
+				position: relative;
+			}
+			.barra {
+					height: 20px;
+					width: 60px;
+					margin: 5px;
+					background-color: white;
+					display: block;
+					color: black;
+					opacity: .5;
+			}
+			.ejex {
+				position: absolute;
+				top:0;
+			}
+
+		</style>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				var years = [];
+				var year = 2010;
+				var max_data = 0;
+				var max_width = 800;
+				var data = [{
+					"categoria":"Educación",
+					"data":{
+						"2010":{"cantidad":998},
+						"2011":{"cantidad":512}
+					}
+				},{
+					"categoria":"Energía",
+					"data":{
+						"2010":{"cantidad":210},
+						"2011":{"cantidad":314}
+					}
+				}
+				]
+				_.each(data, function(valores){
+					_.each(valores["data"], function(value, key){
+						years.push(parseInt(key,10));
+						max_data = Math.max(max_data, value.cantidad)
+					});
+				});
+				years = _.uniq(years);
+				// years = _.map(data, function(valores){
+				// 	return _.map(valores["data"], function(value, key){return key});
+				// });
+				// console.log(years);
+
+				var graph = d3.select("body")
+								.append("div")
+								.attr("class","graph")
+								.style("width", max_width)
+
+				var ancho = d3.scale.linear()
+							.domain([0,max_data])
+							.range([0,max_width])
+
+				ejex = graph.selectAll(".ejex")
+								.data([0,max_data/2, max_data])
+								.enter()
+								.append("div")
+								.attr("class","ejex")
+								.style("left", function(d, i){
+									return ancho(d);
+								})
+								.text(function(d,i){return d;})
+
+
+				var redraw = function(){
+
+
+					barras = graph.selectAll(".barra")
+						.data(data)
+					
+					barras.enter()
+							.append("div")
+							.attr("class","barra");
+
+
+					barras.text(function(d,i){
+								return d.categoria + " - " + year;
+							})
+							
+							.transition()
+							.duration(1000)
+							.style("width", function(d, i){
+								return ancho(d.data[year].cantidad);
+							})
+				}
+				redraw();
+				cambiar_ano= function(){
+					actual_year = _.indexOf(years, year);
+					year = years[(actual_year + 1)%years.length]
+
+
+					redraw()
+					return false;
+				}
+
+			})
+		</script>
+	</head>
+	<body>
+		<a href="#" onclick="cambiar_ano()">otro año</a>
+	</body>
+</html>

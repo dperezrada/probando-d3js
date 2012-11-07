@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<script src="http://d3js.org/d3.v2.js"></script>
+		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+		<!--script src="http://underscorejs.org/underscore.js"></script-->
+		<script type="text/javascript">
+			$(document).ready(
+				function(){
+					datos = ["a1", "a2", "a3"]
+					body = d3.select("body");
+
+					// Enter
+					numeros = body.selectAll(".numeros")
+						.data(datos);
+					
+					numeros.enter()
+						.append("div")
+						.attr("class", function(valor,i){return "numero"+valor;})
+						.text(function(valor, i){return i;})
+
+					//update
+					numeros.style("color", "red");
+
+
+
+					svg = body.append("svg")
+						.attr("width", 1000)
+						.attr("height", 500);
+
+
+					rango = d3.scale.linear()
+						.domain([10, 40])
+						.range(["red", "blue"]);
+
+					circulo = svg.selectAll("circle")
+						.data([10,20,30,40])
+						.enter()
+						.append("circle")
+						.attr("cx", function(d, i){return 10*d})
+						.attr("cy", function(d, i){return 10*d})
+						.attr("fill", function(d,i){return rango(d)})
+						.attr("r", 20);
+
+
+
+
+
+					circulo.transition()
+						.duration(5000)
+						.attr("r", 50)
+						.attr("cx", function(d, i){return 20*d})
+						.attr("cy", function(d, i){return 20*d})
+						.attr("fill", "blue");
+
+
+
+
+
+
+
+					// body.selectAll("div")
+
+
+					// update
+					// exit
+					// numeros.exit().remove();
+				}
+			)
+
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
